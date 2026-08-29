@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dieng Global Business</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f6f6f6;
+  color:#111;
+}
+
+header{
+  background:#111;
+  color:white;
+  padding:15px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:bold;
+}
+
+.cart{
+  background:white;
+  color:#111;
+  border:0;
+  border-radius:20px;
+  padding:9px 13px;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.search{
+  margin-top:13px;
+  width:100%;
+  padding:12px 15px;
+  border:0;
+  border-radius:25px;
+  font-size:15px;
+  outline:none;
+}
+
+/* BANNIÈRE */
+.hero{
+  background:white;
+  padding:22px 15px;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:27px;
+  margin-bottom:8px;
+}
+
+.hero p{
+  color:#666;
+  line-height:1.5;
+}
+
+/* CATÉGORIES */
+.categories{
+  padding:15px;
+  background:white;
+}
+
+.categories h2{
+  font-size:20px;
+  margin-bottom:12px;
+}
+
+.category-list{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:5px;
+}
+
+.category-list button{
+  white-space:nowrap;
+  border:1px solid #ddd;
+  background:#fff;
+  padding:10px 15px;
+  border-radius:22px;
+  cursor:pointer;
+}
+
+.category-list button:hover{
+  background:#111;
+  color:white;
+}
+
+/* PRODUITS */
+.products-section{
+  padding:15px;
+}
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.section-title h2{
+  font-size:20px;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.product{
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.product img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  display:block;
+}
+
+.product-info{
+  padding:11px;
+}
+
+.product-name{
+  font-weight:bold;
+  font-size:15px;
+  margin-bottom:6px;
+}
+
+.product-description{
+  color:#777;
+  font-size:12px;
+  min-height:30px;
+}
+
+.price{
+  font-size:17px;
+  font-weight:bold;
+  margin:9px 0;
+}
+
+.product-buttons{
+  display:flex;
+  gap:6px;
+}
+
+.product-buttons button{
+  flex:1;
+  border:0;
+  padding:9px 5px;
+  border-radius:7px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.add{
+  background:#111;
+  color:white;
+}
+
+.whatsapp{
+  background:#25D366;
+  color:white;
+}
+
+/* PANIER */
+.cart-panel{
+  position:fixed;
+  right:-100%;
+  top:0;
+  width:90%;
+  max-width:400px;
+  height:100%;
+  background:white;
+  z-index:200;
+  padding:20px;
+  transition:.3s;
+  box-shadow:-5px 0 20px rgba(0,0,0,.2);
+  overflow-y:auto;
+}
+
+.cart-panel.open{
+  right:0;
+}
+
+.cart-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close{
+  border:0;
+  background:#eee;
+  border-radius:50%;
+  width:35px;
+  height:35px;
+  cursor:pointer;
+}
+
+.cart-item{
+  border-bottom:1px solid #eee;
+  padding:12px 0;
+}
+
+.cart-item strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.remove{
+  color:#d00;
+  background:none;
+  border:0;
+  margin-top:5px;
+}
+
+.total{
+  font-size:20px;
+  font-weight:bold;
+  margin:20px 0;
+}
+
+.order{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:8px;
+  background:#25D366;
+  color:white;
+  font-weight:bold;
+  font-size:16px;
+}
+
+/* FOOTER */
+footer{
+  margin-top:25px;
+  background:#111;
+  color:white;
+  text-align:center;
+  padding:25px 15px;
+}
+
+footer p{
+  margin:7px;
+  color:#ccc;
+}
+
+@media(min-width:700px){
+  .products{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .product img{
+    height:220px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">DIENG GLOBAL BUSINESS</div>
+
+    <button class="cart" onclick="openCart()">
+      🛒 Panier (<span id="cartCount">0</span>)
+    </button>
+  </div>
+
+  <input
+    class="search"
+    id="search"
+    type="text"
+    placeholder="🔎 Rechercher un produit..."
+    oninput="searchProducts()"
+  >
+</header>
+
+<section class="hero">
+  <h1>📱 Dieng Global Business</h1>
+  <p>
+    Vente de produits iTech<br>
+    iPhone • iPad • MacBook • Apple Watch • AirPods • Samsung • Google Pixel • Tecno
+  </p>
+</section>
+
+<section class="categories">
+  <h2>Catégories</h2>
+
+  <div class="category-list">
+    <button onclick="filterProducts('Tous')">Tous</button>
+    <button onclick="filterProducts('iPhone')">🍎 iPhone</button>
+    <button onclick="filterProducts('iPad')">📱 iPad</button>
+    <button onclick="filterProducts('MacBook')">💻 MacBook</button>
+    <button onclick="filterProducts('Apple Watch')">⌚ Apple Watch</button>
+    <button onclick="filterProducts('AirPods')">🎧 AirPods</button>
+    <button onclick="filterProducts('Samsung')">📱 Samsung</button>
+    <button onclick="filterProducts('Google Pixel')">📱 Google Pixel</button>
+    <button onclick="filterProducts('Tecno')">📱 Tecno</button>
+  </div>
+</section>
+
+<section class="products-section">
+
+  <div class="section-title">
+    <h2>Nos produits</h2>
+  </div>
+
+  <div class="products" id="products"></div>
+
+</section>
+
+<!-- PANIER -->
+
+<div class="cart-panel" id="cartPanel">
+
+  <div class="cart-header">
+    <h2>🛒 Mon panier</h2>
+    <button class="close" onclick="closeCart()">✕</button>
+  </div>
+
+  <div id="cartItems"></div>
+
+  <div class="total">
+    Total : <span id="cartTotal">0 FCFA</span>
+  </div>
+
+  <button class="order" onclick="orderWhatsApp()">
+    Commander sur WhatsApp
+  </button>
+
+</div>
+
+<footer>
+  <h3>DIENG GLOBAL BUSINESS</h3>
+  <p>📱 Vente de produits iTech</p>
+  <p>📞 77 361 51 63</p>
+  <p>© 2026 Dieng Global Business</p>
+</footer>
+
+<script>
+
+const products = [
+
+  {
+    id:1,
+    name:"iPhone 14 Pro",
+    category:"iPhone",
+    price:450000,
+    image:"https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?auto=format&fit=crop&w=600&q=80",
+    description:"iPhone 14 Pro • Excellent état"
+  },
+
+  {
+    id:2,
+    name:"iPhone 15 Pro",
+    category:"iPhone",
+    price:600000,
+    image:"https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=600&q=80",
+    description:"iPhone 15 Pro • Disponible"
+  },
+
+  {
+    id:3,
+    name:"iPad",
+    category:"iPad",
+    price:300000,
+    image:"https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=600&q=80",
+    description:"iPad • Plusieurs modèles"
+  },
+
+  {
+    id:4,
+    name:"MacBook",
+    category:"MacBook",
+    price:550000,
+    image:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80",
+    description:"MacBook • Plusieurs configurations"
+  },
+
+  {
+    id:5,
+    name:"Apple Watch",
+    category:"Apple Watch",
+    price:180000,
+    image:"https://images.unsplash.com/photo-1544117519-31a4b719223d?auto=format&fit=crop&w=600&q=80",
+    description:"Apple Watch"
+  },
+
+  {
+    id:6,
+    name:"AirPods",
+    category:"AirPods",
+    price:120000,
+    image:"https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=600&q=80",
+    description:"AirPods • Neuf"
+  },
+
+  {
+    id:7,
+    name:"Samsung Galaxy",
+    category:"Samsung",
+    price:250000,
+    image:"https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80",
+    description:"Samsung Galaxy"
+  },
+
+  {
+    id:8,
+    name:"Google Pixel",
+    category:"Google Pixel",
+    price:300000,
+    image:"https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80",
+    description:"Google Pixel"
+  },
+
+  {
+    id:9,
+    name:"Tecno",
+    category:"Tecno",
+    price:150000,
+    image:"https://images.unsplash.com/photo-1598327106026-d9521da673d8?auto=format&fit=crop&w=600&q=80",
+    description:"Tecno Smartphone"
+  }
+
+];
+
+let cart = [];
+let currentCategory = "Tous";
+
+function displayProducts(list = products){
+
+  const container = document.getElementById("products");
+
+  container.innerHTML = "";
+
+  if(list.length === 0){
+
+    container.innerHTML =
+      "<p>Aucun produit trouvé.</p>";
+
+    return;
+  }
+
+  list.forEach(product => {
+
+    container.innerHTML += `
+
+      <div class="product">
+
+        <img src="${product.image}" alt="${product.name}">
+
+        <div class="product-info">
+
+          <div class="product-name">
+            ${product.name}
+          </div>
+
+          <div class="product-description">
+            ${product.description}
+          </div>
+
+          <div class="price">
+            ${product.price.toLocaleString()} FCFA
+          </div>
+
+          <div class="product-buttons">
+
+            <button class="add"
+              onclick="addToCart(${product.id})">
+              🛒 Ajouter
+            </button>
+
+            <button class="whatsapp"
+              onclick="buyWhatsApp(${product.id})">
+              WhatsApp
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+function filterProducts(category){
+
+  currentCategory = category;
+
+  if(category === "Tous"){
+
+    displayProducts(products);
+
+  }else{
+
+    displayProducts(
+      products.filter(p => p.category === category)
+    );
+
+  }
+
+}
+
+function searchProducts(){
+
+  const search =
+    document.getElementById("search").value.toLowerCase();
+
+  let result = products.filter(p =>
+    p.name.toLowerCase().includes(search) ||
+    p.category.toLowerCase().includes(search)
+  );
+
+  if(currentCategory !== "Tous"){
+
+    result = result.filter(
+      p => p.category === currentCategory
+    );
+
+  }
+
+  displayProducts(result);
+
+}
+
+function addToCart(id){
+
+  const product =
+    products.find(p => p.id === id);
+
+  cart.push(product);
+
+  updateCart();
+
+  alert(product.name + " ajouté au panier !");
+
+}
+
+function updateCart(){
+
+  document.getElementById("cartCount").textContent =
+    cart.length;
+
+  const container =
+    document.getElementById("cartItems");
+
+  container.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach((product,index) => {
+
+    total += product.price;
+
+    container.innerHTML += `
+
+      <div class="cart-item">
+
+        <strong>${product.name}</strong>
+
+        ${product.price.toLocaleString()} FCFA
+
+        <br>
+
+        <button
+          class="remove"
+          onclick="removeFromCart(${index})">
+          Supprimer
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+  document.getElementById("cartTotal").textContent =
+    total.toLocaleString() + " FCFA";
+
+}
+
+function removeFromCart(index){
+
+  cart.splice(index,1);
+
+  updateCart();
+
+}
+
+function openCart(){
+
+  document
+    .getElementById("cartPanel")
+    .classList.add("open");
+
+}
+
+function closeCart(){
+
+  document
+    .getElementById("cartPanel")
+    .classList.remove("open");
+
+}
+
+function buyWhatsApp(id){
+
+  const product =
+    products.find(p => p.id === id);
+
+  const message =
+    "Bonjour Dieng Global Business, je suis intéressé(e) par : " +
+    product.name +
+    " - " +
+    product.price.toLocaleString() +
+    " FCFA.";
+
+  window.open(
+    "https://wa.me/221773615163?text=" +
+    encodeURIComponent(message),
+    "_blank"
+  );
+
+}
+
+function orderWhatsApp(){
+
+  if(cart.length === 0){
+
+    alert("Votre panier est vide.");
+
+    return;
+
+  }
+
+  let message =
+    "Bonjour Dieng Global Business, je voudrais commander :%0A%0A";
+
+  let total = 0;
+
+  cart.forEach(product => {
+
+    message +=
+      "• " +
+      product.name +
+      " - " +
+      product.price.toLocaleString() +
+      " FCFA%0A";
+
+    total += product.price;
+
+  });
+
+  message +=
+    "%0ATotal : " +
+    total.toLocaleString() +
+    " FCFA";
+
+  window.open(
+    "https://wa.me/221773615163?text=" +
+    message,
+    "_blank"
+  );
+
+}
+
+displayProducts();
+
+</script>
+
+</body>
+  </html>
